@@ -23,7 +23,9 @@ backend that gptel supports (Claude, ChatGPT, Gemini, Ollama, etc.).
 - Summaries are filled/reflowed with =fill-region= for readable output
 
 #+CAPTION: Summary output in an Org buffer
-[[./screenshots/summary.png]]
+[[./assets/usage.png]]
+
+[[./assets/summary.png]]
 
 * Requirements
 
@@ -66,8 +68,6 @@ Clone the repo, add it to your =load-path=, then:
    the model, backend, system prompt, temperature, etc.
 5. Press =s= to summarize — results appear asynchronously in =*elfeed-ai*=
 
-#+CAPTION: The gptel settings menu accessible via =g=
-[[./screenshots/gptel-menu.png]]
 
 * Keybindings
 
