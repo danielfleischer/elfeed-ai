@@ -148,7 +148,9 @@ BUFFER is the Org output buffer."
         (with-current-buffer buffer
           (goto-char (point-max))
           (insert (elfeed-ai--format-entry-heading entry))
-          (insert response "\n\n"))))
+          (let ((response-start (point)))
+            (insert response "\n\n")
+            (fill-region response-start (point))))))
     (setcar counter (1+ (car counter)))
     (message "elfeed-ai: %d/%d summaries completed" (car counter) total)
     (when (and (= (car counter) total) (buffer-live-p buffer))
