@@ -18,6 +18,8 @@ backend that gptel supports (Claude, ChatGPT, Gemini, Ollama, etc.).
 - The =Elfeed-AI= directive is registered in gptel's directive list so
   it appears alongside your other directives
 - Summaries are filled/reflowed with =fill-region= for readable output
+- Summarizes the RSS/Atom feed content as stored by elfeed — no live
+  web crawling; works best with feeds that include full article text
 
 #+CAPTION: Summary output in an Org buffer
 [[./assets/usage.png]]
@@ -64,8 +66,7 @@ Clone the repo, add it to your =load-path=, then:
 4. Optionally press =g= to open the full gptel menu and configure
    the model, backend, system prompt, temperature, etc.
 5. Press =s= to summarize — results appear asynchronously in =*elfeed-ai*=
-
-
+   
 * Keybindings
 
 These are active when =elfeed-ai-mode= is enabled:
