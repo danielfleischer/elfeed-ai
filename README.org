@@ -7,9 +7,6 @@ Mark articles in the elfeed search buffer, press =S=, and get
 concise summaries in a dedicated Org buffer — powered by any LLM
 backend that gptel supports (Claude, ChatGPT, Gemini, Ollama, etc.).
 
-#+CAPTION: Marking articles and opening the elfeed-ai menu
-[[./screenshots/menu.png]]
-
 * Features
 
 - Mark/unmark individual entries with =m= / =u= (or unmark all with =U=)
