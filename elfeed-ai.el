@@ -25,11 +25,15 @@
 
 ;; Summarize elfeed articles using an LLM via gptel.
 ;;
+;; Setup:
+;;   (add-hook 'elfeed-search-mode-hook #'elfeed-ai-mode)
+;;
 ;; Usage:
 ;;   1. In the elfeed search buffer, mark entries with `m' (unmark with `u')
-;;   2. Press `S' to open the summarization menu (configure model, prompt)
-;;   3. Press `s' in the menu to summarize
-;;   4. Summaries appear asynchronously in the *elfeed-ai* Org buffer
+;;   2. Press `S' to open the summarization menu
+;;   3. Optionally press `g' to configure gptel (model, temperature, etc.)
+;;   4. Press `s' to summarize
+;;   5. Summaries appear asynchronously in the *elfeed-ai* Org buffer
 
 ;;; Code:
 
@@ -45,7 +49,7 @@
   :prefix "elfeed-ai-")
 
 (defcustom elfeed-ai-system-prompt
-  "You are a helpful assistant. Summarize the following article concisely, highlighting the key points. Use plain text, no markdown formatting."
+  "You are a helpful assistant. Summarize the following article concisely, highlighting the key points. Use org-mode formatting, starting with level 2."
   "System prompt sent to the LLM for article summarization."
   :type 'string
   :group 'elfeed-ai)
@@ -55,12 +59,14 @@
   :type 'string
   :group 'elfeed-ai)
 
-;;; Marking
+(defvar gptel--system-message)
 
-(defface elfeed-ai-marked-face
-  '((t :inherit elfeed-search-title-face :weight bold :foreground "orange"))
-  "Face for marked elfeed entries."
-  :group 'elfeed-ai)
+(defun elfeed-ai--register-directive ()
+  "Register the elfeed-ai directive in `gptel-directives'."
+  (unless (assq 'Elfeed-AI gptel-directives)
+    (push (cons 'Elfeed-AI elfeed-ai-system-prompt) gptel-directives)))
+
+;;; Marking
 
 (defun elfeed-ai-mark ()
   "Mark the current elfeed entry for summarization.
@@ -145,10 +151,8 @@ BUFFER is the Org output buffer."
           (insert response "\n\n"))))
     (setcar counter (1+ (car counter)))
     (message "elfeed-ai: %d/%d summaries completed" (car counter) total)
-    (when (and (= (car counter) total)
-               (buffer-live-p buffer))
-      (with-current-buffer buffer
-        (goto-char (point-min)))
+    (when (and (= (car counter) total) (buffer-live-p buffer))
+      (with-current-buffer buffer (goto-char (point-min)))
       (display-buffer buffer))))
 
 ;;;###autoload
@@ -180,7 +184,7 @@ Summaries are displayed in an Org buffer."
                 (message "elfeed-ai: skipping \"%s\" (no content)"
                          (elfeed-entry-title entry)))
             (gptel-request text
-              :system elfeed-ai-system-prompt
+              :system gptel--system-message
               :buffer buf
               :callback (elfeed-ai--make-callback entry total counter buf)))))
       ;; Remove summarize tags from processed entries
@@ -193,6 +197,7 @@ Summaries are displayed in an Org buffer."
 
 ;;; Transient menu
 
+;;;###autoload
 (transient-define-prefix elfeed-ai-menu ()
   "Elfeed AI summarization menu."
   [:description
@@ -200,18 +205,32 @@ Summaries are displayed in an Org buffer."
      (let ((marked (length (elfeed-ai--marked-entries))))
        (format "Elfeed AI  [%d marked article%s]"
                marked (if (= marked 1) "" "s"))))
-   ["Model"
-    (gptel--infix-provider)]
    ["Actions"
     ("s" "Summarize" elfeed-ai-summarize)
+    ("g" "gptel settings..." gptel-menu)
     ("q" "Quit" transient-quit-one)]])
 
-;;; Keybindings
+;;; Keymap and minor mode
 
-(define-key elfeed-search-mode-map (kbd "m") #'elfeed-ai-mark)
-(define-key elfeed-search-mode-map (kbd "u") #'elfeed-ai-unmark)
-(define-key elfeed-search-mode-map (kbd "U") #'elfeed-ai-unmark-all)
-(define-key elfeed-search-mode-map (kbd "S") #'elfeed-ai-menu)
+(defvar elfeed-ai-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "m") #'elfeed-ai-mark)
+    (define-key map (kbd "u") #'elfeed-ai-unmark)
+    (define-key map (kbd "U") #'elfeed-ai-unmark-all)
+    (define-key map (kbd "S") #'elfeed-ai-menu)
+    map)
+  "Keymap for `elfeed-ai-mode'.")
+
+;;;###autoload
+(define-minor-mode elfeed-ai-mode
+  "Minor mode for AI-powered summarization in elfeed.
+Provides keybindings for marking entries and summarizing them.
+\\{elfeed-ai-mode-map}"
+  :lighter " AI"
+  :keymap elfeed-ai-mode-map
+  (when elfeed-ai-mode
+    (elfeed-ai--register-directive)
+    (setq-local gptel--system-message elfeed-ai-system-prompt)))
 
 (provide 'elfeed-ai)
 ;;; elfeed-ai.el ends here
