@@ -2,10 +2,10 @@
 
 ;; Copyright (C) 2026  Daniel Fleischer
 
-;; Author: Daniel Fleischer
+;; Author: Daniel Fleischer <danflscr@gmail.com>
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "28.1") (elfeed "3.4.1") (gptel "0.9"))
-;; Keywords: comm, news
+;; Package-Requires: ((emacs "28.1") (elfeed "3.4.1") (gptel "0.9.9"))
+;; Keywords: comm, news, ai
 ;; URL: https://github.com/danielfleischer/elfeed-ai
 
 ;; This program is free software; you can redistribute it and/or modify
