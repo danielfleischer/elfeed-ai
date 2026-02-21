@@ -1,4 +1,4 @@
-#+TITLE: elfeed-ai
+#+TITLE: elfeed-AI
 #+AUTHOR: Daniel Fleischer
 
 AI-powered article summarization for [[https://github.com/skeeto/elfeed][elfeed]], using [[https://github.com/karthink/gptel][gptel]].
