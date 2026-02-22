@@ -52,6 +52,12 @@
   "You are a helpful assistant. Summarize the following article concisely, highlighting the key points. Use org-mode formatting, starting with level 2."
   "System prompt sent to the LLM for article summarization."
   :type 'string
+  :set (lambda (sym val)
+         (set-default sym val)
+         (dolist (buf (buffer-list))
+           (when (buffer-local-value 'elfeed-ai-mode buf)
+             (with-current-buffer buf
+               (setq-local gptel--system-message val)))))
   :group 'elfeed-ai)
 
 (defcustom elfeed-ai-buffer-name "*elfeed-ai*"
