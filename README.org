@@ -43,7 +43,7 @@ backend that gptel supports (Claude, ChatGPT, Gemini, Ollama, etc.).
 
 ;; Example specifying the version-control backend explicitly
 (use-package elfeed-ai
-  :vc (elfeed-ai :url "https://github.comdanielfleischer/elfeed-ai")
+  :vc (elfeed-ai :url "https://github.com/danielfleischer/elfeed-ai")
   :hook (elfeed-search-mode . elfeed-ai-mode))
 #+end_src
 
