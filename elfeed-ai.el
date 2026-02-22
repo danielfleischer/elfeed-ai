@@ -29,10 +29,10 @@
 ;;   (add-hook 'elfeed-search-mode-hook #'elfeed-ai-mode)
 ;;
 ;; Usage:
-;;   1. In the elfeed search buffer, mark entries with `m' (unmark with `u')
-;;   2. Press `S' to open the summarization menu
-;;   3. Optionally press `g' to configure gptel (model, temperature, etc.)
-;;   4. Press `s' to summarize
+;;   1. In the elfeed search buffer, mark entries with m (unmark with u)
+;;   2. Press S to open the summarization menu
+;;   3. Optionally press g to configure gptel (model, temperature, etc.)
+;;   4. Press s to summarize
 ;;   5. Summaries appear asynchronously in the *elfeed-ai* Org buffer
 
 ;;; Code:
@@ -47,6 +47,8 @@
   "AI-powered summarization for elfeed."
   :group 'elfeed
   :prefix "elfeed-ai-")
+
+(defvar elfeed-ai-mode nil "Minor-mode for elfeed-ai")
 
 (defcustom elfeed-ai-system-prompt
   "You are a helpful assistant. Summarize the following article concisely, highlighting the key points. Use org-mode formatting, starting with level 2."
@@ -129,7 +131,7 @@ Removes the `summarize' tag and moves to the next entry."
   "Format an Org heading with metadata for ENTRY."
   (let ((title (elfeed-entry-title entry))
         (feed (elfeed-feed-title (elfeed-entry-feed entry)))
-        (date (format-time-string "%Y-%m-%d" (elfeed-entry-date entry)))
+        (date (format-time-string "%F" (elfeed-entry-date entry)))
         (url (elfeed-entry-link entry)))
     (concat "* " title "\n"
             ":PROPERTIES:\n"
@@ -171,7 +173,7 @@ Summaries are displayed in an Org buffer."
   (interactive)
   (let ((entries (elfeed-ai--marked-entries)))
     (unless entries
-      (user-error "No marked entries. Use `m' to mark entries first"))
+      (user-error "No marked entries. Use \\[elfeed-ai-mark] to mark entries first"))
     (let ((buf (get-buffer-create elfeed-ai-buffer-name))
           (total (length entries))
           (counter (cons 0 nil))
@@ -182,7 +184,7 @@ Summaries are displayed in an Org buffer."
           (erase-buffer))
         (org-mode)
         (insert "#+TITLE: Elfeed AI Summaries\n")
-        (insert (format "#+DATE: %s\n" (format-time-string "%Y-%m-%d %H:%M")))
+        (insert (format "#+DATE: %s\n" (format-time-string "%F %R")))
         (insert (format "#+MODEL: %s / %s\n\n" backend-name model-name)))
       (dolist (entry entries)
         (let ((text (elfeed-ai--entry-text entry)))
