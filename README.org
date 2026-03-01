@@ -1,6 +1,10 @@
 #+TITLE: elfeed-AI
 #+AUTHOR: Daniel Fleischer
 
+#+html: <a href="https://www.gnu.org/software/emacs/"><img alt="GNU Emacs" src="https://github.com/minad/corfu/blob/screenshots/emacs.svg?raw=true"/></a>
+#+html: <a href="https://melpa.org/#/elfeed-ai"><img alt="MELPA" src="https://melpa.org/packages/elfeed-ai-badge.svg"/></a>
+#+html: <a href="https://stable.melpa.org/#/elfeed-ai"><img src="https://stable.melpa.org/packages/elfeed-ai-badge.svg"></a>
+
 AI-powered article summarization for [[https://github.com/skeeto/elfeed][elfeed]], using [[https://github.com/karthink/gptel][gptel]].
 
 Mark articles in the elfeed search buffer, press =S=, and get
@@ -33,6 +37,14 @@ backend that gptel supports (Claude, ChatGPT, Gemini, Ollama, etc.).
 - [[https://github.com/karthink/gptel][gptel]] (with a configured backend)
 
 * Installation
+
+** MELPA
+
+#+begin_src emacs-lisp
+(use-package elfeed-ai
+  :ensure t
+  :hook (elfeed-search-mode . elfeed-ai-mode))
+#+end_src
 
 ** straight.el / use-package
 
